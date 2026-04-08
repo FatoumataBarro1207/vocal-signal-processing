@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Accueil – TNS Signal Vocal{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <div class="hero-glow"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">ESP · UCAD · DIC2 · 2025–2026</div>
+    <h1 class="hero-title">
+      Traitement<br>
+      <span class="gradient-text">Numérique du Signal</span>
+    </h1>
+    <p class="hero-desc">
+      Application web de numérisation, segmentation et filtrage de signal vocal.<br>
+      Développée avec Python & Flask · Dr. Moustapha MBAYE
+    </p>
+
+    <div class="hero-cards">
+
+      <!-- Carte Partie 1 -->
+      <a href="{{ url_for('partie1') }}" class="hero-card">
+        <div class="card-icon-wrap p1">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M9 11V7a3 3 0 016 0v4"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <span class="card-label">Partie 1</span>
+          <h2 class="card-title">Numérisation & Segmentation</h2>
+          <p class="card-desc">Enregistrement vocal configurable, base de données audio organisée, découpage automatique des silences.</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <!-- Carte Partie 2 -->
+      <a href="{{ url_for('partie2') }}" class="hero-card">
+        <div class="card-icon-wrap p2">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <span class="card-label">Partie 2</span>
+          <h2 class="card-title">Analyse FFT & Filtrage</h2>
+          <p class="card-desc">Spectre fréquentiel, identification visuelle du bruit, filtre rectangulaire passe/coupe-bande, reconstruction IFFT.</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+    </div><!-- /hero-cards -->
+
+    <!-- Specs techniques -->
+    <div class="specs-row">
+      <div class="spec-chip">Python 3.13</div>
+      <div class="spec-chip">Flask</div>
+      <div class="spec-chip">NumPy · SciPy FFT</div>
+      <div class="spec-chip">16 / 22 / 44 kHz</div>
+      <div class="spec-chip">Filtre rectangulaire</div>
+    </div>
+
+  </div><!-- /hero-content -->
+</div>
+{% endblock %}

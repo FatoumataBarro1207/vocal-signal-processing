@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Partie 2 – FFT & Filtrage{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-inner">
+    <span class="page-badge p2">Partie 2</span>
+    <h1 class="page-title">Analyse FFT & Filtrage Fréquentiel</h1>
+    <p class="page-sub">Chargez un fichier audio, analysez son spectre et appliquez un filtre rectangulaire passe-bande ou coupe-bande.</p>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+
+  <!-- ── COLONNE GAUCHE ──────────────────────────────────────────── -->
+  <div class="col-left">
+
+    <!-- Upload -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon-sm">📁</span>
+        <h2 class="card-h2">Chargement du fichier audio</h2>
+      </div>
+      <div class="card-content">
+
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon">🎵</div>
+          <p class="upload-text">Déposez un fichier audio ici</p>
+          <p class="upload-sub">WAV, MP3, OGG… (conversion auto en WAV)</p>
+          <label class="btn-upload">
+            <input type="file" id="audio-upload" accept="audio/*" hidden/>
+            Choisir un fichier
+          </label>
+        </div>
+
+        <div id="file-info" class="file-info hidden">
+          <div class="info-row">
+            <span class="info-icon">🎵</span>
+            <div class="info-details">
+              <span class="info-name" id="info-filename"></span>
+              <span class="info-meta" id="info-meta"></span>
+            </div>
+            <span class="info-check">✓</span>
+          </div>
+        </div>
+
+        <div id="upload-spinner" class="spinner-wrap hidden">
+          <div class="spinner"></div>
+          <span>Chargement & analyse FFT…</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Filtre -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon-sm">▦</span>
+        <h2 class="card-h2">Filtre rectangulaire</h2>
+      </div>
+      <div class="card-content">
+
+        <div class="formula-box">
+          <div class="formula-label">Masque fréquentiel (sujet §3.3)</div>
+          <div class="formula-text" id="formula-display">
+            H(f) = 1 si f<sub>min</sub> ≤ |f| ≤ f<sub>max</sub> (passe-bande)
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Type de filtre</label>
+          <div class="btn-group" id="filter-type-group">
+            <button class="btn-choice active" data-value="passband">Passe-bande</button>
+            <button class="btn-choice" data-value="stopband">Coupe-bande</button>
+          </div>
+        </div>
+
+        <div class="field-row-2">
+          <div class="field-group">
+            <label class="field-label" for="fmin">f<sub>min</sub> (Hz)</label>
+            <input type="number" id="fmin" class="input-field" value="300" min="0" step="10"/>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="fmax">f<sub>max</sub> (Hz)</label>
+            <input type="number" id="fmax" class="input-field" value="3400" min="0" step="10"/>
+          </div>
+        </div>
+
+        <div class="mask-preview">
+          <canvas id="mask-canvas" height="60"></canvas>
+        </div>
+
+        <button class="btn-primary full-width" id="btn-filter" disabled>
+          ▦ Appliquer le filtre
+        </button>
+
+        <div id="filter-spinner" class="spinner-wrap hidden">
+          <div class="spinner p2"></div>
+          <span>Application du masque & reconstruction IFFT…</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── COLONNE DROITE ─────────────────────────────────────────── -->
+  <div class="col-right">
+
+    <!-- Signal original -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon-sm">〜</span>
+        <h2 class="card-h2">Signal original</h2>
+      </div>
+      <div class="card-content">
+        <div id="original-placeholder" class="plot-placeholder">
+          <span>Chargez un fichier pour voir le signal</span>
+        </div>
+        <div id="original-plots" class="hidden">
+          <img id="plot-time-orig" class="plot-img" alt="Signal temporel"/>
+          <img id="plot-fft-orig"  class="plot-img" alt="Spectre FFT"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signal filtré -->
+    <div class="card hidden" id="filtered-card">
+      <div class="card-header">
+        <span class="card-icon-sm" style="color:var(--p2-light)">▣</span>
+        <h2 class="card-h2">Signal filtré</h2>
+        <span class="filter-badge" id="filter-badge-label"></span>
+      </div>
+      <div class="card-content">
+
+        <div class="compare-tabs">
+          <button class="tab-btn active" data-tab="spectres">Spectres</button>
+          <button class="tab-btn" data-tab="temporal">Temporel</button>
+        </div>
+
+        <div class="tab-content" id="tab-spectres">
+          <div class="compare-row">
+            <div class="compare-col">
+              <p class="compare-label original-label">Avant filtrage</p>
+              <img id="plot-fft-orig-cmp" class="plot-img" alt="FFT avant"/>
+            </div>
+            <div class="compare-col">
+              <p class="compare-label filtered-label">Après filtrage</p>
+              <img id="plot-fft-filtered" class="plot-img" alt="FFT après"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-temporal">
+          <canvas id="compare-canvas" height="160"></canvas>
+        </div>
+
+        <div class="audio-section">
+          <p class="audio-label">Écoute du signal filtré</p>
+          <audio id="filtered-player" controls class="audio-player"></audio>
+        </div>
+
+        <a id="download-link" class="btn-download" download>
+          ↓ Télécharger le WAV filtré
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/partie2.js') }}"></script>
+{% endblock %}

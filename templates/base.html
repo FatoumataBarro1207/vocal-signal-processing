@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}TNS – Signal Vocal{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ── Navigation ───────────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">◈</span>
+      <span class="brand-text">TNS <span class="brand-sub">Signal Vocal</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}"   class="nav-link {% if request.endpoint == 'index'   %}active{% endif %}">Accueil</a>
+      <a href="{{ url_for('partie1') }}" class="nav-link {% if request.endpoint == 'partie1' %}active{% endif %}">
+        <span class="nav-badge">P1</span> Numérisation
+      </a>
+      <a href="{{ url_for('partie2') }}" class="nav-link {% if request.endpoint == 'partie2' %}active{% endif %}">
+        <span class="nav-badge p2">P2</span> FFT & Filtrage
+      </a>
+    </div>
+    <div class="nav-meta">
+      <span class="meta-chip">ESP / UCAD</span>
+      <span class="meta-chip">DIC2 – 2025</span>
+    </div>
+  </nav>
+
+  <!-- ── Contenu principal ─────────────────────────────────────────── -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <span>Traitement Numérique du Signal · Dr. Moustapha MBAYE · ESP/UCAD · 2025–2026</span>
+  </footer>
+
+  <!-- ── Toast notifications ──────────────────────────────────────── -->
+  <div id="toast-container"></div>
+
+  <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
